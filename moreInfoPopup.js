@@ -13,7 +13,7 @@
    *  
    *  #Dependencies
    *    - JQuery 3.x and above
-   *    - GSAP
+   *    - GSAP TimelineMax
    *  
    *  @args
    *    onClickSelector : A selector of elements that will call the more info popup.
