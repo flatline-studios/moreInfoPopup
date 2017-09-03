@@ -1,33 +1,35 @@
+/** More Info Popup Plugin definition.
+ *  
+ *  Author  : Kerry Taylor
+ *  Version : 0.6
+ *  Date    : 04/09/2017
+ *  
+ *  Creates a floating window in a position relative to a clicked element.
+ *  The floating window (the popup), contains the contents of another DOM element, whose relative
+ *  location is defined in the getContents callback function.
+ *  
+ *  #Dependencies
+ *    - JQuery 3.x and above
+ *    - GSAP TimelineMax
+ *  
+ *  @args
+ *    onClickSelector : A selector of elements that will call the more info popup.
+ *    getContents     : A user defined function that defines a route that can be taken to get from
+ *                      the onClickSelector, to the info that needs to be presented within the popup.
+ *    options         : The options object. See the defaults for an example.
+ *  
+ *  @properties
+ *    none
+ *  
+ *  @methods
+ *    none
+ *  
+ */
+
 // Create Closure.
 (function($) {
   
-  /** More Info Popup Plugin definition.
-   *  
-   *  Author  : Kerry Taylor
-   *  Version : 0.5
-   *  Date    : 13/08/2017
-   *  
-   *  Creates a floating window in a position relative to a clicked element.
-   *  The floating window (the popup), contains the contents of another DOM element, whose relative
-   *  location is defined in the getContents callback function.
-   *  
-   *  #Dependencies
-   *    - JQuery 3.x and above
-   *    - GSAP TimelineMax
-   *  
-   *  @args
-   *    onClickSelector : A selector of elements that will call the more info popup.
-   *    getContents     : A user defined function that defines a route that can be taken to get from
-   *                      the onClickSelector, to the info that needs to be presented within the popup.
-   *    options         : The options object. See the defaults for an example.
-   *  
-   *  @properties
-   *    none
-   *  
-   *  @methods
-   *    none
-   *  
-   */
+  // The plugin.
   $.fn.moreInfoPopup = function(onClickSelector, getContents, options) {
     
     // Creates the settings for this INSTANCE.
@@ -41,6 +43,7 @@
     settings._arrow = '.'+settings.arrow;
     settings._body = '.'+settings.body;
     settings._content = '.'+settings.content;
+    settings._active = '.'+settings.active;
     
     
     // Helper function that gets the bottom coordinate of the main element.
@@ -57,6 +60,7 @@
       settings.$arrow = $(settings._arrow);
       settings.$body = $(settings._body);
       settings.$content = $(settings._content);
+      settings.$onClickSelector = $(onClickSelector);
     }
     
     // Adds the GSAP timeline to the settings.
@@ -117,6 +121,9 @@
       // listener.
       if ((parseFloat(settings.$wrapper.css('top')) === yLocation) || (!$popupContents.length)) {
         
+        // Removes any active classes from the on click selectors.
+        settings.$onClickSelector.removeClass(settings.active);
+        
         // Hides the more info popup.
         settings.timeline.reverse();
 
@@ -124,6 +131,12 @@
         return;
 
       } else {
+        
+        // Removes any active classes from the on click selectors.
+        settings.$onClickSelector.removeClass(settings.active);
+        
+        // Adds the active class to the clicked on click selector.
+        $(this).addClass(settings.active);
         
         // Sets the more info popup to be at the correct height.
         settings.$wrapper.css('top', yLocation + 'px');
@@ -144,10 +157,13 @@
         
         // If anywhere other than the onClickSelector is clicked, then hide the popup.
         if (!$(e.target).is(onClickSelector)) {
-
+          
+          // Removes any active classes from the on click selectors.
+          settings.$onClickSelector.removeClass(settings.active);
+          
           // Hides the more info popup.
           settings.timeline.reverse();
-
+          
         }
       });
     });
@@ -192,7 +208,9 @@
       return this;
     }
     
-    return init();
+    init();
+    
+    return this;
 
   };
   
@@ -203,6 +221,7 @@
     arrow: 'more-info-popup__arrow',
     body: 'more-info-popup__body',
     content: 'more-info-popup__content',
+    active: 'more-info-popup_active',
     animation: {
       speed: 0.3,
       from: {
